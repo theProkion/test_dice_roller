@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dice Roller for Dungeons & Dragons</title>
+    <script>
+        function rollDice() {
+            var input = document.getElementById('diceInput').value;
+            var result = calculateDiceRoll(input);
+            document.getElementById('result').innerHTML = 'Result: ' + result;
+        }
+
+        function calculateDiceRoll(input) {
+            var elements = input.split(/([+-])/);
+            var total = 0;
+
+            for (var i = 0; i < elements.length; i++) {
+                var element = elements[i].trim();
+                if (element.match(/\d+d\d+/)) {  // Matches dice notation
+                    var parts = element.split('d');
+                    var rolls = parseInt(parts[0]);
+                    var faces = parseInt(parts[1]);
+                    for (var j = 0; j < rolls; j++) {
+                        total += Math.floor(Math.random() * faces) + 1;
+                    }
+                } else if (element.match(/\d+/)) {  // Matches number
+                    total += parseInt(element);
+                } else if (element === '-') {
+                    i++;
+                    var next = parseInt(elements[i].trim());
+                    if (!isNaN(next)) total -= next;
+                } else if (element === '+') {
+                    i++;
+                    var next = parseInt(elements[i].trim());
+                    if (!isNaN(next)) total += next;
+                }
+            }
+
+            return total;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var input = document.getElementById('diceInput');
+            input.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    rollDice();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Dice Roller for Dungeons & Dragons</h1>
+    <input type="text" id="diceInput" placeholder="Enter dice command e.g., 3d4 - 2d6 + 5d100 + 5">
+    <button onclick="rollDice()">Roll</button>
+    <div id="result"></div>
+</body>
+</html>
